@@ -13,12 +13,12 @@ const SPECIFICATIONS = [
   {
     title: 'Authentication & Security',
     description: 'Hybrid OTP and Passwordless authentication architecture powered by Supabase Auth with Row Level Security (RLS) enforcement.',
-    color: '#E2583E', // Saffron
+    color: '#8b5cf6', // Violet
   },
   {
     title: 'AI Integration',
     description: 'Deep integration with Google Gemini AI for complex cognitive pattern recognition, gap analysis, and roadmap generation.',
-    color: '#FFD700', // Gold
+    color: '#06b6d4', // Cyan
   },
   {
     title: 'Real-time Telemetry',
@@ -37,19 +37,19 @@ const GOALS = [
     num: '01',
     title: 'Identify Root Causes',
     desc: 'Move beyond simple "right/wrong" grading to uncover the underlying cognitive gaps hindering student progression.',
-    color: '#E2583E', // Saffron
+    color: '#6366f1', // Indigo
   },
   {
     num: '02',
     title: 'Generate Actionable Paths',
     desc: 'Translate analytical data into highly structured, actionable, and personalized learning roadmaps for every individual.',
-    color: '#f59e0b', // Amber/Orange
+    color: '#8b5cf6', // Violet
   },
   {
     num: '03',
     title: 'Seamless User Experience',
     desc: 'Provide a frictionless, visually stunning, and highly responsive interface that encourages deep student engagement.',
-    color: '#FFD700', // Gold
+    color: '#06b6d4', // Cyan
   },
 ];
 
@@ -175,21 +175,21 @@ export default function LandingPage() {
   const parallaxOffset2 = scrollY * 0.2; // Moves very slow
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-mandala-pattern">
+    <div className="min-h-screen relative overflow-hidden">
       
       {/* Global Ambient Parallax Background */}
       <div className="fixed inset-0 z-[-1] bg-[var(--color-bg)] perspective-[1000px]">
         <div 
           className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full opacity-10 blur-[120px] animate-pulse-slow will-change-transform"
           style={{ 
-            background: '#E2583E', // Saffron
+            background: '#6366f1',
             transform: `translate3d(0, ${parallaxOffset1}px, -100px)`
           }}
         />
         <div 
           className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full opacity-10 blur-[120px] animate-pulse-slow will-change-transform"
           style={{ 
-            background: '#FFD700', // Gold
+            background: '#06b6d4', 
             animationDelay: '2s',
             transform: `translate3d(0, ${-parallaxOffset2}px, -50px)` // Moves slightly up for counter-parallax
           }}
@@ -203,35 +203,25 @@ export default function LandingPage() {
           style={{ transform: `translateY(${scrollY * 0.15}px)`, opacity: 1 - scrollY / 600 }}
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium mb-8 animate-fade-in-down border border-[var(--color-border)] glass-light shadow-lg">
-            <span className="w-2 h-2 rounded-full bg-[var(--color-accent-gold)] animate-pulse shadow-[0_0_8px_var(--color-accent-gold)]" />
-            Trusted by 5 Lakh+ Indian Students
+            <span className="w-2 h-2 rounded-full bg-[var(--color-success)] animate-pulse shadow-[0_0_8px_var(--color-success)]" />
+            Project Mission & Motive
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight mb-8 animate-fade-in-up tracking-tight drop-shadow-2xl">
-            Empowering your child's <br />
-            <span className="gradient-text animate-pulse-glow">future path with global metrics</span>
+            Redefining Education Through <br />
+            <span className="gradient-text animate-pulse-glow">Cognitive AI Analytics</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-[var(--color-muted)] max-w-3xl mx-auto mb-10 animate-fade-in-up delay-200 leading-relaxed font-light">
-            Our diagnostic platform maps the Indian curriculum (CBSE/ICSE/State) to advanced global cognitive metrics. We identify exactly how your child learns, delivering a personalized roadmap to academic excellence.
+            Our mission is to democratize personalized education. By leveraging advanced AI to diagnose how an individual thinks rather than just what they know, we aim to eliminate academic bottlenecks and provide universally accessible, tailored learning roadmaps.
           </p>
 
-          <div className="animate-fade-in-up delay-300 mb-12">
-            <Link href="/quiz" className="btn-primary !px-8 !py-4 text-lg">
-              Launch Diagnostic Assessment
-            </Link>
-          </div>
-
-          {/* Trust Grid */}
-          <div className="animate-fade-in delay-400 max-w-2xl mx-auto border-t border-white/10 pt-8 mt-8">
-            <p className="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-4 font-medium">100% Secure & Verified</p>
-            <div className="flex flex-wrap items-center justify-center gap-6 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-              <span className="font-bold font-mono tracking-tighter text-xl">UPI</span>
-              <span className="font-bold tracking-tight text-xl text-purple-400">PhonePe</span>
-              <span className="font-bold tracking-tighter text-xl text-blue-400">GPay</span>
-              <span className="font-bold tracking-tight text-xl text-cyan-400">Paytm</span>
-              <span className="font-medium text-lg">NetBanking</span>
-            </div>
+          {/* Scroll indicator */}
+          <div className="mt-16 animate-fade-in delay-500 flex flex-col items-center gap-2 text-[var(--color-muted)]">
+            <span className="text-xs uppercase tracking-widest font-medium opacity-80">Explore Project Details</span>
+            <svg className="w-5 h-5 animate-bounce mt-2 text-[var(--color-accent-cyan)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
           </div>
         </div>
       </section>
@@ -242,9 +232,9 @@ export default function LandingPage() {
           
           <FadeInSection className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 drop-shadow-lg">
-              Project <span className="text-[var(--color-accent-gold)]">Specifications</span>
+              Project <span className="text-[var(--color-accent-cyan)]">Specifications</span>
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-[var(--color-accent-saffron)] to-[var(--color-accent-gold)] mx-auto rounded-full mb-6 shadow-[0_0_15px_var(--color-accent-gold)]" />
+            <div className="w-24 h-1 bg-gradient-to-r from-[var(--color-accent-violet)] to-[var(--color-accent-cyan)] mx-auto rounded-full mb-6 shadow-glow-cyan" />
             <p className="text-[var(--color-muted)] max-w-2xl mx-auto">
               The technical foundation and core functional modules that power the platform's analytical capabilities.
             </p>
@@ -266,9 +256,9 @@ export default function LandingPage() {
           
           <FadeInSection className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 drop-shadow-lg">
-              Project <span className="text-[var(--color-accent-saffron)]">Goals</span>
+              Project <span className="text-[var(--color-accent-violet)]">Goals</span>
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-[var(--color-accent-gold)] to-[var(--color-accent-saffron)] mx-auto rounded-full mb-6 shadow-[0_0_15px_var(--color-accent-saffron)]" />
+            <div className="w-24 h-1 bg-gradient-to-r from-[var(--color-accent-cyan)] to-[var(--color-accent-violet)] mx-auto rounded-full mb-6 shadow-glow-violet" />
             <p className="text-[var(--color-muted)] max-w-lg mx-auto">
               The primary objectives we aim to achieve with this platform.
             </p>
@@ -303,57 +293,6 @@ export default function LandingPage() {
                 </p>
               </FadeInSection>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ======================== TESTIMONIALS SECTION ======================== */}
-      <section id="testimonials" className="py-24 px-4 relative z-10 bg-black/20">
-        <div className="max-w-6xl mx-auto">
-          <FadeInSection className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 drop-shadow-lg">
-              Trusted by <span className="text-[var(--color-accent-gold)]">Educators & Students</span>
-            </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-[var(--color-accent-saffron)] to-[var(--color-accent-gold)] mx-auto rounded-full mb-6 shadow-[0_0_15px_var(--color-accent-gold)]" />
-            <p className="text-[var(--color-muted)] max-w-2xl mx-auto">
-              Real stories from across India using our diagnostic metrics.
-            </p>
-          </FadeInSection>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <FadeInSection delay={100} className="card glass-light relative">
-              <div className="absolute top-4 right-4 flex items-center gap-1 bg-green-500/10 text-green-400 px-2 py-1 rounded text-xs font-bold border border-green-500/20">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                Verified Student
-              </div>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--color-accent-saffron)] to-[var(--color-accent-gold)] flex items-center justify-center text-lg font-bold text-black shadow-lg">A</div>
-                <div>
-                  <h4 className="text-white font-semibold">Ananya P.</h4>
-                  <p className="text-xs text-[var(--color-muted)]">Class 12, CBSE (Pune)</p>
-                </div>
-              </div>
-              <p className="text-sm text-[var(--color-muted)] italic leading-relaxed">
-                "EduPulse completely changed my approach to Physics. It didn't just tell me I was weak at mechanics; it showed me that my underlying issue was with applying calculus vectors. The personalized roadmap was a game changer for my JEE prep."
-              </p>
-            </FadeInSection>
-
-            <FadeInSection delay={200} className="card glass-light relative">
-              <div className="absolute top-4 right-4 flex items-center gap-1 bg-blue-500/10 text-blue-400 px-2 py-1 rounded text-xs font-bold border border-blue-500/20">
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
-                Educator
-              </div>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-lg font-bold text-white shadow-lg">R</div>
-                <div>
-                  <h4 className="text-white font-semibold">Rahul M., PhD</h4>
-                  <p className="text-xs text-[var(--color-muted)]">Mathematics Professor</p>
-                </div>
-              </div>
-              <p className="text-sm text-[var(--color-muted)] italic leading-relaxed">
-                "As an educator, seeing exactly where the cognitive gap lies—whether it's recall, analysis, or application—allows me to intervene exactly where the student needs it. This platform brings global analytical standards to local classrooms."
-              </p>
-            </FadeInSection>
           </div>
         </div>
       </section>

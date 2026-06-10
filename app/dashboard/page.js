@@ -17,7 +17,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import PerformanceChart from '@/components/PerformanceChart';
-import RoadmapTimeline from '@/components/RoadmapTimeline';
 
 // Subject color mapping
 const SUBJECT_COLORS = {
@@ -32,44 +31,12 @@ export default function DashboardPage() {
   const [results, setResults] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [mockRoadmap, setMockRoadmap] = useState(null);
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem('edupulse_results');
       if (stored) {
-        const parsed = JSON.parse(stored);
-        setResults(parsed);
-        
-        // Generate a mock roadmap timeline based on weakest subject
-        const subjectEntries = Object.entries(parsed.scores?.subjectScores || {});
-        const sorted = [...subjectEntries].sort((a, b) => b[1].percentage - a[1].percentage);
-        const weakest = sorted[sorted.length - 1];
-        
-        if (weakest) {
-          setMockRoadmap({
-            topic: `Mastering ${weakest[0]} Fundamentals`,
-            difficulty: 'Targeted Remediation',
-            milestones: [
-              {
-                title: `Phase 1: ${weakest[0]} Core Concepts`,
-                description: `Rebuild foundational knowledge gaps identified in the diagnostic assessment. Focus heavily on basic recall and structure.`,
-                resources: [`NCERT ${weakest[0]} Base Text`, 'Concept Video Lectures']
-              },
-              {
-                title: 'Phase 2: Applied Problem Solving',
-                description: 'Translate theoretical knowledge into actionable problem solving. Bridge the gap between understanding and execution.',
-                resources: ['Practice Question Bank', 'Step-by-step Solution Guides']
-              },
-              {
-                title: 'Phase 3: Advanced Analysis & Mastery',
-                description: 'Tackle complex, multi-variable problems to build critical analysis skills and ensure exam-readiness.',
-                resources: ['Mock Assessments', 'Previous Year Papers']
-              }
-            ]
-          });
-        }
-        
+        setResults(JSON.parse(stored));
       } else {
         setError('No assessment data found. Please take the quiz first.');
       }
@@ -333,21 +300,6 @@ export default function DashboardPage() {
                 </div>
               ))}
             </div>
-          </div>
-        )}
-
-        {/* ====== Dynamic Timeline UI based on Performance Gaps ====== */}
-        {mockRoadmap && (
-          <div className="mb-12 animate-fade-in-up delay-300">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[var(--color-accent-saffron)]/20 border border-[var(--color-accent-saffron)]/40 text-[var(--color-accent-saffron)]">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-white">Personalized Learning Path</h3>
-            </div>
-            <RoadmapTimeline roadmap={mockRoadmap} />
           </div>
         )}
 
