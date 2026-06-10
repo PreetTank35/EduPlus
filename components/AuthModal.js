@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import Image from 'next/image'
@@ -162,13 +163,13 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
     }
   }
 
-  return (
+  return createPortal(
     <div 
       id="modal-backdrop"
-      className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
+      className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in overflow-y-auto"
       onClick={handleBackdropClick}
     >
-      <div className="card w-full max-w-md animate-fade-in-up relative shadow-2xl border border-white/10">
+      <div className="card w-full max-w-md max-h-[90vh] overflow-y-auto animate-fade-in-up relative shadow-2xl border border-white/10 my-auto">
         
         {/* Close Button — prominent X to dismiss modal */}
         <button 
@@ -426,7 +427,20 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
           </>
         )}
 
+        {/* Bottom close link — always visible */}
+        <button
+          onClick={onClose}
+          className="w-full mt-6 py-2.5 flex items-center justify-center gap-2 text-sm text-[var(--color-muted)] hover:text-white transition-colors rounded-lg hover:bg-white/5"
+          id="auth-modal-close-bottom"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          Close and go back
+        </button>
+
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
