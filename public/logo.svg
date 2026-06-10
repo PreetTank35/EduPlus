@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="pulse-grad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="50%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <!-- Brain/pulse icon -->
+  <circle cx="24" cy="24" r="22" stroke="url(#pulse-grad)" stroke-width="2.5" fill="none" opacity="0.3"/>
+  <circle cx="24" cy="24" r="16" stroke="url(#pulse-grad)" stroke-width="2" fill="none" opacity="0.5"/>
+  <!-- Pulse line -->
+  <polyline
+    points="6,24 14,24 17,16 20,32 23,20 26,28 29,24 32,24 35,18 38,24 42,24"
+    stroke="url(#pulse-grad)"
+    stroke-width="2.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+  <!-- Center dot -->
+  <circle cx="24" cy="24" r="3" fill="url(#pulse-grad)" opacity="0.8"/>
+</svg>
