@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { createClient } from '@/utils/supabase/client';
 
 /**
  * Navbar — Glassmorphic navigation bar
@@ -13,6 +14,7 @@ import { useState } from 'react';
  * - Mobile hamburger menu with slide-in drawer
  * - Gradient logo branding
  * - Sticky positioning with backdrop blur
+ * - Auth state tracking and Logout
  */
 
 const NAV_LINKS = [
@@ -24,7 +26,30 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase.auth]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/');
+    router.refresh();
+  };
 
   return (
     <nav
@@ -88,14 +113,24 @@ export default function Navbar() {
           </div>
 
           {/* Desktop CTA */}
-          <div className="hidden md:block">
-            <Link
-              href="/quiz"
-              id="nav-cta"
-              className="btn-primary text-sm !py-2 !px-5"
-            >
-              Start Assessment
-            </Link>
+          <div className="hidden md:flex items-center gap-4">
+            {user ? (
+              <button
+                onClick={handleLogout}
+                id="nav-logout"
+                className="btn-secondary text-sm !py-2 !px-4"
+              >
+                Sign Out
+              </button>
+            ) : (
+              <Link
+                href="/auth"
+                id="nav-cta"
+                className="btn-primary text-sm !py-2 !px-5"
+              >
+                Sign In
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -155,14 +190,26 @@ export default function Navbar() {
                 </Link>
               );
             })}
-            <div className="pt-2">
-              <Link
-                href="/quiz"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="btn-primary w-full text-sm !py-2.5"
-              >
-                Start Assessment
-              </Link>
+            <div className="pt-2 border-t border-[var(--color-border)] mt-2">
+              {user ? (
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="btn-secondary w-full text-sm !py-2.5"
+                >
+                  Sign Out
+                </button>
+              ) : (
+                <Link
+                  href="/auth"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="btn-primary w-full text-sm !py-2.5"
+                >
+                  Sign In
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -170,3 +217,4 @@ export default function Navbar() {
     </nav>
   );
 }
+
