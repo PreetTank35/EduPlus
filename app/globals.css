@@ -19,6 +19,8 @@
   --color-muted: #94a3b8;
 
   /* Accent colors */
+  --color-accent-saffron: #E2583E;
+  --color-accent-gold: #FFD700;
   --color-accent-cyan: #22d3ee;
   --color-accent-violet: #a78bfa;
   --color-accent-emerald: #34d399;
@@ -27,9 +29,9 @@
   --color-accent-blue: #60a5fa;
 
   /* Gradient stops */
-  --color-gradient-start: #6366f1;
-  --color-gradient-mid: #8b5cf6;
-  --color-gradient-end: #06b6d4;
+  --color-gradient-start: #E2583E;
+  --color-gradient-mid: #f59e0b;
+  --color-gradient-end: #FFD700;
 
   /* Status colors */
   --color-success: #22c55e;
@@ -116,11 +118,29 @@ body {
 }
 
 /* =============================================
+   Indian Motif Backgrounds
+   ============================================= */
+
+.bg-mandala-pattern {
+  position: relative;
+}
+.bg-mandala-pattern::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L33 27L60 30L33 33L30 60L27 33L0 30L27 27L30 0Z' fill='%23FFD700' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E");
+  background-size: 120px 120px;
+  background-repeat: repeat;
+}
+
+/* =============================================
    Gradient utilities
    ============================================= */
 
 .gradient-text {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6, #06b6d4);
+  background: linear-gradient(135deg, var(--color-accent-saffron), var(--color-accent-gold));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -142,7 +162,7 @@ body {
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6, #06b6d4);
+  background: linear-gradient(135deg, var(--color-accent-saffron), var(--color-accent-gold));
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: exclude;
@@ -337,17 +357,17 @@ body {
   font-weight: 600;
   font-size: 0.95rem;
   border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: #fff;
+  background: linear-gradient(135deg, var(--color-accent-saffron), var(--color-accent-gold));
+  color: #000;
   border: none;
   cursor: pointer;
   transition: all var(--duration-normal) ease;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 15px rgba(226, 88, 62, 0.4);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5);
 }
 
 .btn-primary:active {
@@ -377,8 +397,8 @@ body {
 }
 
 .btn-secondary:hover {
-  border-color: var(--color-accent-violet);
-  background: rgba(167, 139, 250, 0.1);
+  border-color: var(--color-accent-gold);
+  background: rgba(255, 215, 0, 0.1);
   transform: translateY(-1px);
 }
 

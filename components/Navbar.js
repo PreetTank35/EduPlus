@@ -3,9 +3,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import AuthModal from './AuthModal';
+import { Globe } from 'lucide-react';
 
 /**
  * Navbar — Glassmorphic navigation bar
@@ -33,6 +34,29 @@ export default function Navbar() {
   const [user, setUser] = useState(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState('login');
+  
+  // Language Toggle State
+  const [isLangOpen, setIsLangOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState('EN');
+  const langRef = useRef(null);
+
+  const LANGUAGES = [
+    { code: 'EN', name: 'English' },
+    { code: 'HI', name: 'हिंदी' },
+    { code: 'MR', name: 'मराठी' },
+    { code: 'TA', name: 'தமிழ்' }
+  ];
+
+  // Close language dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (langRef.current && !langRef.current.contains(event.target)) {
+        setIsLangOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     // Get initial session
@@ -117,6 +141,35 @@ export default function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
+            
+            {/* Language Toggle */}
+            <div className="relative" ref={langRef}>
+              <button 
+                onClick={() => setIsLangOpen(!isLangOpen)}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-[var(--color-muted)] hover:text-white hover:bg-white/[0.04] transition-colors"
+              >
+                <Globe className="w-4 h-4" />
+                {currentLang}
+                <svg className={`w-4 h-4 transition-transform duration-200 ${isLangOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {isLangOpen && (
+                <div className="absolute right-0 mt-2 w-32 rounded-xl border border-white/10 glass-light overflow-hidden shadow-2xl animate-fade-in-down z-50">
+                  {LANGUAGES.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => { setCurrentLang(lang.code); setIsLangOpen(false); }}
+                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${currentLang === lang.code ? 'bg-[var(--color-accent-saffron)]/20 text-[var(--color-accent-gold)] font-medium' : 'text-[var(--color-muted)] hover:bg-white/5 hover:text-white'}`}
+                    >
+                      {lang.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {user ? (
               <button
                 onClick={handleLogout}

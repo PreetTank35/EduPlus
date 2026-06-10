@@ -1,6 +1,7 @@
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import Navbar from '@/components/Navbar';
 import ActivityTracker from '@/components/ActivityTracker';
+import FloatingActionButtons from '@/components/FAB';
 import './globals.css';
 
 /**
@@ -51,6 +52,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="bg-animated-gradient min-h-screen">
+        <FloatingActionButtons />
         <ActivityTracker />
         
         {/* Global navigation */}
@@ -62,4 +64,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-
