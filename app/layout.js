@@ -1,6 +1,7 @@
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono, Space_Grotesk } from 'next/font/google';
 import Navbar from '@/components/Navbar';
 import ActivityTracker from '@/components/ActivityTracker';
+import AuroraBackground from '@/components/AuroraBackground';
 import './globals.css';
 
 /**
@@ -19,6 +20,12 @@ const inter = Inter({
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-jetbrains-mono',
+  display: 'swap',
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-space-grotesk',
   display: 'swap',
 });
 
@@ -49,15 +56,18 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body className="bg-animated-gradient min-h-screen">
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable}`}>
+      <body className="bg-[#08080c] text-white min-h-screen">
+        {/* Aurora animated background — fixed, behind everything */}
+        <AuroraBackground />
+
         <ActivityTracker />
         
         {/* Global navigation */}
         <Navbar />
 
         {/* Page content with top padding for fixed navbar */}
-        <main className="pt-16">{children}</main>
+        <main className="pt-16 relative z-[1]">{children}</main>
       </body>
     </html>
   );

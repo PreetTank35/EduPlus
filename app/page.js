@@ -3,11 +3,45 @@
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import BorderGlow from '@/components/BorderGlow';
+import BlurText from '@/components/BlurText';
 
 /**
  * Landing Page — Project Showcase
  * Featuring Advanced 3D Tilt Cards, Parallax, and Scroll Animations
  */
+
+// --- Color helpers for BorderGlow ---
+// Converts a hex color to "H S L" string format required by BorderGlow's glowColor prop
+function hexToHSL(hex) {
+  let r = parseInt(hex.slice(1, 3), 16) / 255;
+  let g = parseInt(hex.slice(3, 5), 16) / 255;
+  let b = parseInt(hex.slice(5, 7), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h, s, l = (max + min) / 2;
+  if (max === min) { h = s = 0; }
+  else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+      case g: h = ((b - r) / d + 2) / 6; break;
+      case b: h = ((r - g) / d + 4) / 6; break;
+    }
+  }
+  return `${Math.round(h * 360)} ${Math.round(s * 100)} ${Math.round(l * 100)}`;
+}
+
+// Lightens a hex color by a given percentage (0-100) to create a secondary gradient stop
+function lightenHex(hex, amount) {
+  let r = parseInt(hex.slice(1, 3), 16);
+  let g = parseInt(hex.slice(3, 5), 16);
+  let b = parseInt(hex.slice(5, 7), 16);
+  r = Math.min(255, r + Math.round((255 - r) * (amount / 100)));
+  g = Math.min(255, g + Math.round((255 - g) * (amount / 100)));
+  b = Math.min(255, b + Math.round((255 - b) * (amount / 100)));
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+}
 
 const SPECIFICATIONS = [
   {
@@ -54,7 +88,7 @@ const GOALS = [
 ];
 
 // --- 3D Interactive Tilt Card Component ---
-function TiltCard({ spec }) {
+function TiltCard({ spec, noBorder = false }) {
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef(null);
@@ -64,14 +98,10 @@ function TiltCard({ spec }) {
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
-    // Calculate rotation (-10 to 10 degrees)
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    
     const rotateY = ((x - centerX) / centerX) * 10;
     const rotateX = -((y - centerY) / centerY) * 10;
-    
     setRotation({ x: rotateX, y: rotateY });
   };
 
@@ -86,15 +116,15 @@ function TiltCard({ spec }) {
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
-      className={`card glass group border transition-all ease-out ${isHovered ? 'border-white/20' : 'border-white/5'} relative overflow-hidden`}
+      className={`group relative overflow-hidden p-6 ${noBorder ? 'bg-transparent' : 'card glass border border-white/5'} transition-all ease-out`}
       style={{
         transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale(${isHovered ? 1.02 : 1})`,
         transformStyle: 'preserve-3d',
-        transitionDuration: isHovered ? '50ms' : '500ms', // Snap to mouse fast, return to flat slow
+        transitionDuration: isHovered ? '50ms' : '500ms',
         willChange: 'transform'
       }}
     >
-      {/* Dynamic Hover Glow based on Mouse Position */}
+      {/* Dynamic Hover Glow */}
       <div 
         className="absolute inset-0 opacity-0 group-hover:opacity-15 transition-opacity duration-300 pointer-events-none"
         style={{ 
@@ -158,63 +188,62 @@ function FadeInSection({ children, delay = 0, className = "" }) {
 
 // --- Main Page ---
 export default function LandingPage() {
-  const [scrollY, setScrollY] = useState(0);
+  const heroRef = useRef(null);
 
+  // Lightweight scroll parallax — writes directly to DOM, no React re-renders
   useEffect(() => {
-    const handleScroll = () => {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
       requestAnimationFrame(() => {
-        setScrollY(window.scrollY);
+        const y = window.scrollY;
+        if (heroRef.current) {
+          heroRef.current.style.transform = `translateY(${y * 0.15}px)`;
+          heroRef.current.style.opacity = Math.max(1 - y / 600, 0);
+        }
+        ticking = false;
       });
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
-
-  // Parallax calculations
-  const parallaxOffset1 = scrollY * 0.5; // Moves slower than scroll (background depth)
-  const parallaxOffset2 = scrollY * 0.2; // Moves very slow
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      
-      {/* Global Ambient Parallax Background */}
-      <div className="fixed inset-0 z-[-1] bg-[var(--color-bg)] perspective-[1000px]">
-        <div 
-          className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full opacity-10 blur-[120px] animate-pulse-slow will-change-transform"
-          style={{ 
-            background: '#6366f1',
-            transform: `translate3d(0, ${parallaxOffset1}px, -100px)`
-          }}
-        />
-        <div 
-          className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full opacity-10 blur-[120px] animate-pulse-slow will-change-transform"
-          style={{ 
-            background: '#06b6d4', 
-            animationDelay: '2s',
-            transform: `translate3d(0, ${-parallaxOffset2}px, -50px)` // Moves slightly up for counter-parallax
-          }}
-        />
-      </div>
 
       {/* ======================== HERO / MISSION SECTION ======================== */}
       <section id="mission" className="relative min-h-[80vh] flex flex-col items-center justify-center px-4 pt-20 pb-16">
         <div 
-          className="max-w-5xl mx-auto text-center relative z-10 will-change-transform"
-          style={{ transform: `translateY(${scrollY * 0.15}px)`, opacity: 1 - scrollY / 600 }}
+          ref={heroRef}
+          className="max-w-5xl mx-auto text-center relative z-10 will-change-[transform,opacity]"
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium mb-8 animate-fade-in-down border border-[var(--color-border)] glass-light shadow-lg">
             <span className="w-2 h-2 rounded-full bg-[var(--color-success)] animate-pulse shadow-[0_0_8px_var(--color-success)]" />
             Project Mission & Motive
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight mb-8 animate-fade-in-up tracking-tight drop-shadow-2xl">
-            Redefining Education Through <br />
-            <span className="gradient-text animate-pulse-glow">Cognitive AI Analytics</span>
-          </h1>
+          {/* Hero H1 — BlurText animates each word from the top with a staggered delay */}
+          <BlurText
+            text="Redefining Education Through Cognitive AI Analytics"
+            animateBy="words"
+            direction="top"
+            delay={120}
+            stepDuration={0.55}
+            threshold={0.05}
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight mb-8 tracking-tight drop-shadow-2xl justify-center"
+          />
 
-          <p className="text-lg sm:text-xl text-[var(--color-muted)] max-w-3xl mx-auto mb-10 animate-fade-in-up delay-200 leading-relaxed font-light">
-            Our mission is to democratize personalized education. By leveraging advanced AI to diagnose how an individual thinks rather than just what they know, we aim to eliminate academic bottlenecks and provide universally accessible, tailored learning roadmaps.
-          </p>
+          {/* Hero subtitle — BlurText animates word-by-word from bottom for contrast with the H1 */}
+          <BlurText
+            text="Our mission is to democratize personalized education. By leveraging advanced AI to diagnose how an individual thinks rather than just what they know, we aim to eliminate academic bottlenecks and provide universally accessible, tailored learning roadmaps."
+            animateBy="words"
+            direction="bottom"
+            delay={40}
+            stepDuration={0.4}
+            threshold={0.05}
+            className="text-lg sm:text-xl text-[var(--color-muted)] max-w-3xl mx-auto mb-10 leading-relaxed font-light justify-center"
+          />
 
           {/* Scroll indicator */}
           <div className="mt-16 animate-fade-in delay-500 flex flex-col items-center gap-2 text-[var(--color-muted)]">
@@ -231,19 +260,40 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto">
           
           <FadeInSection className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 drop-shadow-lg">
-              Project <span className="text-[var(--color-accent-cyan)]">Specifications</span>
-            </h2>
+            {/* Section heading — letters animate in one-by-one from the top */}
+            <BlurText
+              text="Project Specifications"
+              animateBy="letters"
+              direction="top"
+              delay={60}
+              stepDuration={0.3}
+              threshold={0.2}
+              className="text-3xl sm:text-4xl font-bold mb-4 drop-shadow-lg justify-center"
+            />
             <div className="w-24 h-1 bg-gradient-to-r from-[var(--color-accent-violet)] to-[var(--color-accent-cyan)] mx-auto rounded-full mb-6 shadow-glow-cyan" />
             <p className="text-[var(--color-muted)] max-w-2xl mx-auto">
               The technical foundation and core functional modules that power the platform's analytical capabilities.
             </p>
           </FadeInSection>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 perspective-[1000px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {SPECIFICATIONS.map((spec, idx) => (
               <FadeInSection key={spec.title} delay={idx * 150}>
-                <TiltCard spec={spec} />
+                {/* BorderGlow wraps TiltCard — glow color driven by each spec's accent color */}
+                <BorderGlow
+                  backgroundColor="#0d0d14"
+                  glowColor={`${hexToHSL(spec.color)}`}
+                  colors={[spec.color, lightenHex(spec.color, 20), '#38bdf8']}
+                  borderRadius={16}
+                  edgeSensitivity={20}
+                  glowRadius={35}
+                  glowIntensity={1.2}
+                  coneSpread={22}
+                  animated={idx === 0}
+                  className="w-full h-full"
+                >
+                  <TiltCard spec={spec} noBorder />
+                </BorderGlow>
               </FadeInSection>
             ))}
           </div>
@@ -255,9 +305,16 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto">
           
           <FadeInSection className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 drop-shadow-lg">
-              Project <span className="text-[var(--color-accent-violet)]">Goals</span>
-            </h2>
+            {/* Goals heading — words animate from bottom to differentiate from the Specs heading */}
+            <BlurText
+              text="Project Goals"
+              animateBy="words"
+              direction="bottom"
+              delay={180}
+              stepDuration={0.5}
+              threshold={0.2}
+              className="text-3xl sm:text-4xl font-bold mb-4 drop-shadow-lg justify-center"
+            />
             <div className="w-24 h-1 bg-gradient-to-r from-[var(--color-accent-cyan)] to-[var(--color-accent-violet)] mx-auto rounded-full mb-6 shadow-glow-violet" />
             <p className="text-[var(--color-muted)] max-w-lg mx-auto">
               The primary objectives we aim to achieve with this platform.
@@ -266,31 +323,47 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
             {GOALS.map((goal, idx) => (
-              <FadeInSection key={goal.num} delay={idx * 200} className="relative text-center group">
-                
+              <FadeInSection key={goal.num} delay={idx * 200} className="relative">
                 {/* Connector line (desktop only) */}
                 {idx < GOALS.length - 1 && (
                   <div className="hidden md:block absolute top-10 left-[60%] w-[80%] h-px bg-gradient-to-r from-[var(--color-border)] to-transparent opacity-50 z-0" />
                 )}
 
-                {/* Number circle */}
-                <div
-                  className="w-20 h-20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-2xl font-bold text-white transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3 shadow-[0_0_30px_rgba(0,0,0,0.5)] relative z-10"
-                  style={{
-                    background: `linear-gradient(135deg, ${goal.color}30, ${goal.color}10)`,
-                    border: `1px solid ${goal.color}40`,
-                    boxShadow: `0 0 20px ${goal.color}20`,
-                    color: goal.color,
-                  }}
+                {/* BorderGlow wraps entire goal card */}
+                <BorderGlow
+                  backgroundColor="#0a0a12"
+                  glowColor={`${hexToHSL(goal.color)}`}
+                  colors={[goal.color, lightenHex(goal.color, 25), '#818cf8']}
+                  borderRadius={20}
+                  edgeSensitivity={15}
+                  glowRadius={45}
+                  glowIntensity={1.4}
+                  coneSpread={28}
+                  animated={false}
+                  fillOpacity={0.35}
+                  className="w-full"
                 >
-                  {goal.num}
-                </div>
-                <h3 className="text-lg font-semibold text-white mb-3 transition-colors duration-300" style={{ color: goal.color }}>
-                  {goal.title}
-                </h3>
-                <p className="text-sm text-[var(--color-muted)] leading-relaxed max-w-xs mx-auto group-hover:text-[var(--color-foreground)] transition-colors duration-300">
-                  {goal.desc}
-                </p>
+                  <div className="text-center group p-6">
+                    {/* Number circle */}
+                    <div
+                      className="w-20 h-20 rounded-2xl mx-auto mb-6 flex items-center justify-center text-2xl font-bold text-white transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3 shadow-[0_0_30px_rgba(0,0,0,0.5)] relative z-10"
+                      style={{
+                        background: `linear-gradient(135deg, ${goal.color}30, ${goal.color}10)`,
+                        border: `1px solid ${goal.color}40`,
+                        boxShadow: `0 0 20px ${goal.color}20`,
+                        color: goal.color,
+                      }}
+                    >
+                      {goal.num}
+                    </div>
+                    <h3 className="text-lg font-semibold mb-3 transition-colors duration-300" style={{ color: goal.color }}>
+                      {goal.title}
+                    </h3>
+                    <p className="text-sm text-[var(--color-muted)] leading-relaxed max-w-xs mx-auto group-hover:text-[var(--color-foreground)] transition-colors duration-300">
+                      {goal.desc}
+                    </p>
+                  </div>
+                </BorderGlow>
               </FadeInSection>
             ))}
           </div>
