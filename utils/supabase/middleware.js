@@ -39,14 +39,14 @@ export async function updateSession(request) {
   const isProtected = ['/dashboard', '/quiz', '/roadmap', '/analytics'].some(path => request.nextUrl.pathname.startsWith(path))
 
   if (!user && isProtected) {
-    // no user, potentially respond by redirecting the user to the login page
+    // no user, redirect to homepage (which has the auth modal)
     const url = request.nextUrl.clone()
-    url.pathname = '/auth'
+    url.pathname = '/'
     // url.searchParams.set('next', request.nextUrl.pathname)
     return NextResponse.redirect(url)
   }
 
-  // If user is logged in and trying to access /auth, redirect to dashboard
+  // If user is logged in and trying to access /auth (just in case they navigate directly), redirect to dashboard
   if (user && isAuthRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
+import AuthModal from './AuthModal';
 
 /**
  * Navbar — Glassmorphic navigation bar
@@ -30,6 +31,8 @@ export default function Navbar() {
   const supabase = createClient();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState('login');
 
   useEffect(() => {
     // Get initial session
@@ -123,13 +126,22 @@ export default function Navbar() {
                 Sign Out
               </button>
             ) : (
-              <Link
-                href="/auth"
-                id="nav-cta"
-                className="btn-primary text-sm !py-2 !px-5"
-              >
-                Sign In
-              </Link>
+              <>
+                <button
+                  onClick={() => { setAuthModalMode('login'); setIsAuthModalOpen(true); }}
+                  id="nav-signin"
+                  className="btn-secondary text-sm !py-2 !px-4"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => { setAuthModalMode('register'); setIsAuthModalOpen(true); }}
+                  id="nav-register"
+                  className="btn-primary text-sm !py-2 !px-5"
+                >
+                  Register
+                </button>
+              </>
             )}
           </div>
 
@@ -202,18 +214,32 @@ export default function Navbar() {
                   Sign Out
                 </button>
               ) : (
-                <Link
-                  href="/auth"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="btn-primary w-full text-sm !py-2.5"
-                >
-                  Sign In
-                </Link>
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() => { setIsMobileMenuOpen(false); setAuthModalMode('login'); setIsAuthModalOpen(true); }}
+                    className="btn-secondary w-full text-sm !py-2.5 text-center"
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={() => { setIsMobileMenuOpen(false); setAuthModalMode('register'); setIsAuthModalOpen(true); }}
+                    className="btn-primary w-full text-sm !py-2.5 text-center"
+                  >
+                    Register
+                  </button>
+                </div>
               )}
             </div>
           </div>
         </div>
       )}
+
+      {/* Auth Modal Overlay */}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        initialMode={authModalMode} 
+      />
     </nav>
   );
 }
